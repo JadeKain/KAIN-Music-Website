@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KAIN-MUSIC.js</title>
+
+  <style>
+    /* Base styles (Desktop default) */
+@font-face {
+  font-family: "KainFont";
+  src: url("Fonts/AlumniSansPinstripe-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+@font-face {
+  font-family: "KainFont-light";
+  src: url("Fonts/AlumniSans-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+    
+body {
+  margin: 0;
+  overflow-x: hidden;
+
+  background-color: black;
+  color: black;
+
+}
+
+.content {
+  position: relative;
+  z-index: 20;
+  margin-left: max(2%,2vw);
+  max-width: 1200px;
+  padding: 2%;
+  
+}
+
+header {
+  position: relative;          
+  z-index: 10;                 
+  width: 100%;
+  height: min(1000px, 100vw);   
+  background-image: url("SiteBackground/KAIN.png");
+  background-size: contain;    
+  background-position: center center;
+  background-repeat: no-repeat;
+
+  animation-duration: 1.5s;
+  animation-name: fadeAndMoveIn;
+}
+
+/*Text header
+header {
+  position: relative;
+  background: linear-gradient(to right,
+      rgba(91, 206, 250, 1) 0%,
+      rgba(245, 169, 184, 1) 55%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: max(20%,128px);
+      font-family: "KainFont-light", sans-serif;
+  
+
+  animation-duration: 1.5s;
+  animation-name: fadeAndMoveIn;
+
+}
+*/
+
+@keyframes fadeAndMoveIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-5%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut{
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+
+}
+
+.overlay-text {
+  position: relative;
+  background: linear-gradient(to right,
+      rgba(91, 206, 250, 1) 0%,
+      rgba(245, 169, 184, 1) 45%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 300%;
+  line-height: 0.70;
+  font-family: "KainFont", sans-serif;
+     animation-duration: 2s;
+  animation-name: fadeAndMoveIn ;
+  
+}
+
+.overlay-images {
+  position: relative;
+  display: flex;
+  flex-direction: column; 
+  gap: 1.5rem;
+
+  animation-duration: 2s;
+  animation-name: fadeAndMoveIn;
+}
+
+.overlay-images img {
+  width: 1024px; 
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 4px;
+}
+
+
+.overlay-wrapper {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 600px;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(to right,
+      rgba(0, 0, 0, 0.85) 0%,
+      rgba(0, 0, 0, 0) 100%);
+      
+}
+
+.overlay-wrapper-glass {
+  position: fixed;
+  inset: 0;
+  width: 1200px;
+  pointer-events: none;
+  z-index: 2;
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  mask-image: linear-gradient(
+    to right,
+    black 0%,
+    black 40%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    black 0%,
+    black 40%,
+    transparent 100%
+  );
+}
+
+.black-screen {
+  position: fixed;
+  inset: 0; 
+  background: black;
+  z-index: 9999;
+  animation: fadeOut 1s ease-in-out forwards;
+}
+
+
+.music-player {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 400px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(24px);
+  padding: 1rem;
+  border-radius: 12px;
+  animation: fadeAndMoveIn 2s;
+  color: rgb(91, 206, 250,);
+  
+  font-family: "KainFont", sans-serif;
+}
+
+.custom-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.custom-controls button {
+  background: rgba(251, 251, 251,0);  
+  backdrop-filter: blur(24px);   
+  border: 1px solid rgb(91, 206, 250);   
+  color: rgb(245, 169, 184); 
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#seek-bar {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  appearance: none;
+  background: linear-gradient(to right, #5bcefa, #f5a9b8);
+  cursor: pointer;
+}
+
+#seek-bar::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  border: 1px solid #f5a9b8;
+}
+
+#current-time, #duration {
+  background: linear-gradient(to right, #5bcefa, #f5a9b8);
+  background-clip: text;          
+  -webkit-background-clip: text;  
+  -webkit-text-fill-color: transparent; 
+  color: transparent;              
+  font-weight: bold;
+}
+
+.volume-control {
+  display: flex;
+  align-items: center;
+  gap: 0.1rem;
+  color: rgb(91, 206, 250);
+  font-family: "KainFont", sans-serif;
+  font-size: 24px;
+}
+
+
+#volume-bar {
+  flex: 1;
+  height: 13px;
+  border-radius: 4px;
+  appearance: none;
+  background: linear-gradient(to right, #5bcefa, #f5a9b8);
+  cursor: pointer;
+}
+
+#volume-bar::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  border: 1px solid #f5a9b8;
+}
+
+
+
+
+#three-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  background-color: black;
+}
+
+#video-canvas {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  height: auto;
+  max-height: 100vh;
+  z-index: 1;
+  background: black;
+
+}
+
+#bg-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+
+}
+
+/*Mobile*/
+@media (max-width: 768px) {
+  header {
+    font-size: 8vw;
+  }
+
+  .overlay-text {
+    font-size: 5vw;
+    line-height: 1.2;
+  }
+
+  .overlay-wrapper {
+    width: 80vw;
+  }
+
+  .content {
+    margin-left: 5%;
+    padding: 2%;
+  }
+
+
+}
+
+
+  </style>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
+      "jsm/": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/"
+    }
+  }
+  </script>
+
+</head>
+<body>
+
+  <div class="black-screen"></div>
+
+
+  <div class="overlay-wrapper"></div>
+
+
+  <header></header>
+
+  <div class="content">
+    <div class="overlay-text">
+      <h1>AUDIO VISUAL MEDITATION</h1>
+
+      <div class="music-player">
+        <div class="custom-controls">
+          <button id="prev-track">⏮</button>
+          <button id="play-pause">▶️</button>
+          <button id="next-track">⏭</button>
+          <span id="current-time">0:00</span> / <span id="duration">0:00</span>
+        </div>
+
+        <input type="range" id="seek-bar" value="0" min="0" max="100">
+
+        <div class="volume-control">
+          <label for="volume-bar">Volume:</label>
+          <input type="range" id="volume-bar" value="80" min="0" max="100">
+        </div>
+
+        <audio id="kain-audio"></audio>
+      </div>
+
+      <p>
+        KAIN: A PERFORMANCE ART PROJECT<br>
+        FOCUSSED ON THE EXPLORATION OF<br><br>
+        SOUND<br>
+        VISUAL<br>
+        MOVEMENT<br>
+        <br>
+        40 MINUTES<br>
+        INDUSTRIAL NOISE<br>
+        SOOTHING SOUNDS<br>
+        CHANTS AND CLASSICAL SINGING<br>
+      </p>
+
+      <p>
+        DATES:<br><br>
+        16 AUGUST 2025 FABRIK DER KUENSTE KREUZBROOK 10/12<br>
+        31 OKTOBER 2025 ZEISEWEG BODENSTRASSE ALTONA<br>
+        TBA
+      </p>
+
+      <p>
+        BOOKING/CONTACT:<br>
+        JADE.KAIN.COFFI@GMAIL.COM
+      </p>
+
+      <p>PRESS:</p>
+    </div>
+
+    <div class="overlay-images">
+      <img src="LiveImages/LiveImageA.jpg" alt="">
+      <img src="LiveImages/LiveImageB.jpg" alt="">
+      <img src="LiveImages/LiveImageC.jpg" alt="">
+      <img src="LiveImages/LiveImageD.jpg" alt="">
+    </div>
+
+    <div style="height: 0vh;"></div>
+  </div>
+
+
+  <canvas id="three-canvas"></canvas>
+  <canvas id="video-canvas"></canvas>
+
+
+  <video id="bg-video" src="SiteBackground/WebsiteBackgroundKain.mp4" loop muted autoplay playsinline></video>
+
+  <img id="video-fallback" src="SiteBackground/bgb.jpg" hidden />
+
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
+        "jsm/": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/"
+      }
+    }
+  </script>
+
+  <script>
+
+    window.addEventListener("load", () => {
+      const blackScreen = document.querySelector(".black-screen");
+      blackScreen.addEventListener("animationend", () => {
+        blackScreen.remove();
+      });
+    });
+
+
+    document.addEventListener("contextmenu", e => e.preventDefault());
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.Camera();
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("three-canvas"), antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+
+    const video = document.getElementById("bg-video");
+    const videoCanvas = document.getElementById("video-canvas");
+    const vctx = videoCanvas.getContext("2d");
+    const fallbackImg = document.getElementById("video-fallback");
+
+    let videoPlaying = false;
+
+
+    const tracks = [
+      "Audio/KAIN-Caramel-Instrumental.mp3",
+      "Audio/KAIN-Ill buy it, your remedy, that thing, ill buy it. I sweat i will believe.mp3"
+    ];
+    let currentTrack = 0;
+
+    const audio = document.getElementById("kain-audio");
+    const playPauseBtn = document.getElementById("play-pause");
+    const seekBar = document.getElementById("seek-bar");
+    const currentTimeEl = document.getElementById("current-time");
+    const durationEl = document.getElementById("duration");
+    const prevBtn = document.getElementById("prev-track");
+    const nextBtn = document.getElementById("next-track");
+    const volumeBar = document.getElementById("volume-bar");
+
+    audio.volume = volumeBar.value / 100;
+    volumeBar.addEventListener("input", () => { audio.volume = volumeBar.value / 100; });
+
+    function loadTrack(index) {
+      audio.src = tracks[index];
+      audio.load();
+      audio.play();
+      playPauseBtn.textContent = "⏸";
+    }
+    loadTrack(currentTrack);
+
+    playPauseBtn.addEventListener("click", () => {
+      if(audio.paused){ audio.play(); playPauseBtn.textContent="⏸"; }
+      else { audio.pause(); playPauseBtn.textContent="▶️"; }
+    });
+
+    prevBtn.addEventListener("click", () => {
+      currentTrack = (currentTrack - 1 + tracks.length) % tracks.length;
+      loadTrack(currentTrack);
+    });
+    nextBtn.addEventListener("click", () => {
+      currentTrack = (currentTrack + 1) % tracks.length;
+      loadTrack(currentTrack);
+    });
+
+    audio.addEventListener("loadedmetadata", () => { durationEl.textContent = formatTime(audio.duration); });
+    audio.addEventListener("timeupdate", () => {
+      const progress = (audio.currentTime / audio.duration) * 100;
+      seekBar.value = progress;
+      currentTimeEl.textContent = formatTime(audio.currentTime);
+    });
+
+    seekBar.addEventListener("input", () => { audio.currentTime = (seekBar.value/100)*audio.duration; });
+
+    function formatTime(seconds){
+      const m=Math.floor(seconds/60);
+      const s=Math.floor(seconds%60);
+      return `${m}:${s.toString().padStart(2,"0")}`;
+    }
+
+
+    video.addEventListener("playing", ()=>videoPlaying=true);
+    video.addEventListener("pause", ()=>videoPlaying=false);
+    video.addEventListener("ended", ()=>videoPlaying=false);
+    video.addEventListener("error", ()=>videoPlaying=false);
+    video.play().catch(()=>videoPlaying=false);
+
+    function resizeVideoCanvas(){
+      const vw=video.videoWidth||fallbackImg.naturalWidth;
+      const vh=video.videoHeight||fallbackImg.naturalHeight;
+      if(!vw||!vh) return;
+      const aspect = vw/vh;
+      let drawW=window.innerWidth;
+      let drawH=drawW/aspect;
+      if(drawH>window.innerHeight){ drawH=window.innerHeight; drawW=drawH*aspect; }
+      videoCanvas.width=drawW;
+      videoCanvas.height=drawH;
+      videoCanvas.style.width=drawW+"px";
+      videoCanvas.style.height=drawH+"px";
+    }
+
+    function drawVideo(){
+      if(videoPlaying && video.readyState>=2 && !video.paused && !video.ended){
+        vctx.drawImage(video,0,0,videoCanvas.width,videoCanvas.height);
+      } else if(fallbackImg.complete){
+        vctx.drawImage(fallbackImg,0,0,videoCanvas.width,videoCanvas.height);
+      }
+      requestAnimationFrame(drawVideo);
+    }
+
+    video.addEventListener("loadedmetadata", resizeVideoCanvas);
+    fallbackImg.addEventListener("load", resizeVideoCanvas);
+    window.addEventListener("resize", resizeVideoCanvas);
+
+    function animate(){
+      requestAnimationFrame(animate);
+      renderer.render(scene,camera);
+    }
+
+    drawVideo();
+    animate();
+  </script>
+</body>
+
+
+</html>
